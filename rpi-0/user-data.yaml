@@ -1,0 +1,190 @@
+#cloud-config
+
+hostname: rpi-0
+# update /etc/hosts according to hostname (otherwise sudo will complain)
+manage_etc_hosts: true
+locale: en_US.UTF-8
+timezone: Europe/Berlin
+# Update apt database on first boot (run 'apt-get update')
+package_update: true
+# Upgrade the instance on first boot
+package_upgrade: true
+
+# Install additional packages on first boot
+packages:
+  - git
+  - curl
+
+users:
+# - default # pi user
+- name: steled
+  groups: sudo
+  sudo: "ALL=(ALL) NOPASSWD:ALL"
+  # set to false to allow password login for this user
+  # only for verifying with dockerpi, passwd auth over SSH should be disabled
+  lock_passwd: true
+  shell: /bin/bash
+  ssh_authorized_keys:
+  - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC3MlX8PC45lojTGQibGHZ0F26FZOhhGwcE3ROlg+LtQ5iPNMh8cjZlQ2BaW0P7D/3YfbiyN6t4odV+bC9Hx/7oXAa3TGvR4rALC7LEw37Fw78sfDqTqRWt3tNSk5BWgKNRpNMLFUwRSUQ0XAVMRQbqzusG4KwL0GgwiSgx5lVMXlt+PRmYhR7zsg0BqxC7WT9hMDVov1UT+xGWKDoWN4WULXYZ1wow2SJfZjw0JYcgb9c2zL2RhGahdF3VO+O/EuYbzvyFithpqYJEcmQAXLyrwyLO3X+Z7uZ7GccTeOrsyX8WGIrfz4wURv5Lqqpmy0VXW19MRrF87HJ5pcig2dOYAS4WkORAsR6f7IaDXEXoDmXlnMIrCCyEpXwZTAdW97QsQbA8t/fqejgG+U0o4PTltkwKywTGksENuzB0EwCrh5wESiX116REwWq+b4P089Pau3NHHe1rZOSJInNjzLvg0ac6kRjzxLAsjG1jupONXbgiPAvmASE6N2X33svskDgeeBmbbFbKG5S4jwXL1fgVwYDtyLehptl1p/mr9bVr/eq4iZjuScnpKpdWtrK756FAbfghbtkulJs0VLsrGenrNS754oIbNzEzELwzDb45TOO0JuhGeywdIm8qluGjuHOgc6BPbv6exZfaC+42z0SWiajJqv6uhrKaGEs553rWSw== steled
+  - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGyuD7T6qU6jE9V/fiVIyaLYZnP9PVA6JQc0u/tXJN/9 steled
+
+# Disable ssh password authentication
+ssh_pwauth: false
+chpasswd:
+  expire: false
+  users:
+    - name: root
+      password: $6$rounds=4096$sfBzc368zclZ5qbK$hu6Qrv.GEJiyGOtlk8Dbox4qVqvZ1qX0mV9tMHyOWa7OpIQ27kKxkE0iE5D387mzhkdZQKjn3ZPEFw6UXwMRT.
+
+bootcmd:
+# disable ipv6 on all interfaces
+- sysctl net.ipv6.conf.all.disable_ipv6=1
+
+runcmd:
+  - sed -i 's/^#AuthorizedKeysFile/AuthorizedKeysFile/' /etc/ssh/sshd_config
+  - sed -i 's/^#PubkeyAuthentication/PubkeyAuthentication/' /etc/ssh/sshd_config
+  - sed -i 's/^#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
+  - sed -i 's/^#PermitEmptyPasswords/PermitEmptyPasswords/' /etc/ssh/sshd_config
+  - sed -i 's/^UsePAM yes/UsePAM no/' /etc/ssh/sshd_config
+  - sed -i '/#PermitRootLogin prohibit-password/aPermitRootLogin yes' /etc/ssh/sshd_config
+  - echo -e "Match User root\n\tPasswordAuthentication yes" | sudo tee -a /etc/ssh/sshd_config
+
+# write_files:
+# - path: /var/lib/rancher/k3s/server/token
+#   permissions: "0600"
+#   content: |
+#     some-random-string
+# - path: /etc/rancher/k3s/config.yaml
+#   permissions: "0600"
+#   content: |
+#     cluster-init: true
+#     tls-san:
+#     - 192.168.0.20
+#     - 192.168.0.30
+#     token-file: /var/lib/rancher/k3s/server/token
+#     disable:
+#     - servicelb
+#     node-label:
+#     - node.kubernetes.io/instance-type=pi-4b-4
+#     - beta.kubernetes.io/instance-type=pi-4b-4
+# - path: /var/lib/cloud/scripts/per-once/00-install-k3s.sh
+#   permissions: "0700"
+#   content: |
+#     #!/bin/bash
+#     echo "Installing k3s (server)"
+
+#     curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL="v1.20" sh -s - server
+# - path: /var/lib/rancher/k3s/server/manifests/kube-vip.yaml
+#   permissions: "0700"
+#   content: |
+#     apiVersion: v1
+#     kind: ServiceAccount
+#     metadata:
+#       name: kube-vip
+#       namespace: kube-system
+#     ---
+#     apiVersion: rbac.authorization.k8s.io/v1
+#     kind: ClusterRole
+#     metadata:
+#       annotations:
+#         rbac.authorization.kubernetes.io/autoupdate: "true"
+#       name: system:kube-vip-role
+#     rules:
+#     - apiGroups: [""]
+#       resources: ["services", "services/status", "nodes"]
+#       verbs: ["list","get","watch", "update"]
+#     - apiGroups: ["coordination.k8s.io"]
+#       resources: ["leases"]
+#       verbs: ["list", "get", "watch", "update", "create"]
+#     ---
+#     kind: ClusterRoleBinding
+#     apiVersion: rbac.authorization.k8s.io/v1
+#     metadata:
+#       name: system:kube-vip-binding
+#     roleRef:
+#       apiGroup: rbac.authorization.k8s.io
+#       kind: ClusterRole
+#       name: system:kube-vip-role
+#     subjects:
+#     - kind: ServiceAccount
+#       name: kube-vip
+#       namespace: kube-system
+#     ---
+#     apiVersion: apps/v1
+#     kind: DaemonSet
+#     metadata:
+#       name: kube-vip
+#       namespace: kube-system
+#     spec:
+#       selector:
+#         matchLabels:
+#           name: kube-vip
+#       template:
+#         metadata:
+#           labels:
+#             name: kube-vip
+#         spec:
+#           containers:
+#           - args:
+#             - manager
+#             - --controlplane
+#             - --arp
+#             - --address=192.168.0.30
+#             - --port=6443
+#             - --interface=eth0
+#             - --leaderElection
+#             - --leaseDuration=15
+#             - --leaseRenewDuration=10
+#             - --leaseRetry=2
+#             - --namespace=kube-system
+#             image: plndr/kube-vip:0.3.2
+#             name: kube-vip
+#             securityContext:
+#               capabilities:
+#                 add:
+#                 - NET_ADMIN
+#                 - NET_RAW
+#                 - SYS_TIME
+#           hostNetwork: true
+#           serviceAccountName: kube-vip
+#           nodeSelector:
+#             kubernetes.io/os: linux
+#             kubernetes.io/arch: arm64
+#             node-role.kubernetes.io/master: "true"
+#           tolerations:
+#           - effect: NoSchedule
+#             key: node-role.kubernetes.io/master
+# - path: /var/lib/rancher/k3s/server/manifests/metallb.yaml
+#   permissions: "0700"
+#   content: |
+#     apiVersion: v1
+#     kind: Namespace
+#     metadata:
+#       name: metallb-system
+#       labels:
+#         app: metallb
+#     ---
+#     apiVersion: helm.cattle.io/v1
+#     kind: HelmChart
+#     metadata:
+#       name: metallb
+#       namespace: metallb-system
+#     spec:
+#       repo: https://charts.bitnami.com/bitnami
+#       chart: metallb
+#       version: 2.3.4
+#       valuesContent: |-
+#         configInline: |
+#           address-pools:
+#           - name: default
+#             protocol: layer2
+#             addresses:
+#             - 192.168.0.31-192.168.0.59
+#         controller:
+#           image:
+#             repository: metallb/controller
+#             tag: v0.9.5
+#         speaker:
+#           image:
+#             repository: metallb/speaker
+#             tag: v0.9.5
