@@ -38,6 +38,10 @@ jobs:
         id: tag
         run: |
           echo "release_tag=UserBuild_$(date +"%Y.%m.%d_%H-%M")" >> $GITHUB_OUTPUT
+      - name: git config
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
       - name: tag the commit
         run: |
           git tag -a "${{ steps.tag.outputs.release_tag }}" -m "Version ${{ steps.tag.outputs.release_tag }}"
