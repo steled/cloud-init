@@ -38,6 +38,10 @@ jobs:
         id: tag
         run: |
           echo "release_tag=UserBuild_$(date +"%Y.%m.%d_%H-%M")" >> $GITHUB_OUTPUT
+      - name: tag the commit
+        run: |
+          git tag -a "${{ steps.get_tag.outputs.version }}" -m "Version ${{ steps.get_tag.outputs.version }}"
+          git push --follow-tags
 
       # Runs a set of commands using the runners shell
       # - name: upload ISO files
