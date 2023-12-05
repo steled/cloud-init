@@ -34,6 +34,11 @@ jobs:
       - name: build ISO files
         run: for server in *; do if [ -d "$server" ]; then echo $server && cloud-localds $server-seed.iso $server/user-data $server/meta-data; fi; done
 
+      - name: generate release tag
+        id: tag
+        run: |
+          echo "::set-output name=release_tag::UserBuild_$(date +"%Y.%m.%d_%H-%M")"
+
       # Runs a set of commands using the runners shell
       # - name: upload ISO files
       #   uses: actions/upload-artifact@v3
@@ -43,4 +48,5 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
+          tag_name: ${{ steps.tag.outputs.release_tag }}
           files: ./*.iso
