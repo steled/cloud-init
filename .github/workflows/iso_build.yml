@@ -37,7 +37,7 @@ jobs:
       - name: generate release tag
         id: tag
         run: |
-          echo "::set-output name=release_tag::UserBuild_$(date +"%Y.%m.%d_%H-%M")"
+          echo "release_tag=UserBuild_$(date +"%Y.%m.%d_%H-%M")" >> $GITHUB_OUTPUT
 
       # Runs a set of commands using the runners shell
       # - name: upload ISO files
