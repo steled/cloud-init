@@ -31,7 +31,7 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: build ISO files
-        run: for server in *; do echo $server && cloud-localds $server-seed.iso $server/user-data $server/meta-data; done
+        run: for server in *; do if [ -d "$server" ]; then echo $server && cloud-localds $server-seed.iso $server/user-data $server/meta-data; fi; done
 
       # Runs a set of commands using the runners shell
       - name: upload ISO files
