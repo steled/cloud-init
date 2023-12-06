@@ -1,0 +1,52 @@
+name: Build seed ISO files
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches: [ "main", "draft" ]
+    paths:
+      - server_seed_iso
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - server_seed_iso
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v4
+
+      - name: install build dependencies
+        shell: bash
+        run: sudo apt install -y cloud-image-utils
+
+      - name: build ISO files
+        run: for server in *; do if [ -d "$server" ]; then echo $server && cloud-localds $server-seed.iso $server/user-data $server/meta-data; fi; done
+
+      - name: generate release tag
+        id: tag
+        run: |
+          echo "release_tag=SeedIsoBuild_$(date +"%Y.%m.%d_%H-%M")" >> $GITHUB_OUTPUT
+
+      - name: git config
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+
+      - name: tag the commit
+        run: |
+          git tag -a "${{ steps.tag.outputs.release_tag }}" -m "Version ${{ steps.tag.outputs.release_tag }}"
+          git push --follow-tags
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.tag.outputs.release_tag }}
+          files: ./*.iso
