@@ -34,8 +34,8 @@ jobs:
       - name: build prerequsites
         shell: bash
         run: |
-          mkdir u22.04-autoinstall-iso
-          cd u22.04-autoinstall-iso
+          mkdir ${{ env.UBUNTU_CODENAME }}-autoinstall-iso
+          cd ${{ env.UBUNTU_CODENAME }}-autoinstall-iso
           wget https://cdimage.ubuntu.com/ubuntu-server/${{ env.UBUNTU_CODENAME }}/daily-live/current/${{ env.UBUNTU_CODENAME }}-live-server-amd64.iso
           7z -y x jammy-live-server-amd64.iso -osource-files
           mv source-files/\[BOOT\]/ ./BOOT
@@ -43,7 +43,7 @@ jobs:
       - name: edit grub.cfg
         shell: bash
         run: |
-          cd u22.04-autoinstall-iso
+          cd ${{ env.UBUNTU_CODENAME }}-autoinstall-iso
           cat << EOF > grub_add.txt
 
           menuentry "Autoinstall Ubuntu Server" {
@@ -57,10 +57,10 @@ jobs:
       - name: generate new ISO file
         shell: bash
         run: |
-          cd u22.04-autoinstall-iso/source-files
+          cd ${{ env.UBUNTU_CODENAME }}-autoinstall-iso/source-files
           xorriso -as mkisofs -r \
           -V 'Ubuntu-Server 22.04.3 LTS amd64' \
-          -o ../ubuntu-22.04-autoinstall.iso \
+          -o ../ubuntu-${{ env.UBUNTU_CODENAME }}-autoinstall.iso \
           --modification-date='2023112609223200' \
           --grub2-mbr '../BOOT/1-Boot-NoEmul.img' \
           --protective-msdos-label \
@@ -86,7 +86,7 @@ jobs:
         id: tag
         shell: bash
         run: |
-          echo "release_tag=UbuntuAutoinstallIsoBuild_$(date +"%Y.%m.%d_%H-%M")" >> $GITHUB_OUTPUT
+          echo "release_tag=Ubuntu-${{ env.UBUNTU_CODENAME }}-AutoinstallIsoBuild_$(date +"%Y.%m.%d_%H-%M")" >> $GITHUB_OUTPUT
 
       - name: git config
         shell: bash
@@ -104,4 +104,4 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ steps.tag.outputs.release_tag }}
-          files: ./*.iso
+          files: ./${{ env.UBUNTU_CODENAME }}-autoinstall-iso/ubuntu-${{ env.UBUNTU_CODENAME }}-autoinstall.iso
