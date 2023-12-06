@@ -61,7 +61,7 @@ jobs:
           cd ${{ env.UBUNTU_CODENAME }}-autoinstall-iso/source-files
           xorriso -as mkisofs -r \
           -V 'Ubuntu-Server 22.04.3 LTS amd64' \
-          -o ../ubuntu-${{ env.UBUNTU_CODENAME }}-autoinstall.iso \
+          -o ../ubuntu-${{ env.UBUNTU_CODENAME }}-autoinstall_$(date +"%Y.%m.%d").iso \
           --modification-date='2023112609223200' \
           --grub2-mbr '../BOOT/1-Boot-NoEmul.img' \
           --protective-msdos-label \
@@ -105,4 +105,4 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ steps.tag.outputs.release_tag }}
-          files: ./${{ env.UBUNTU_CODENAME }}-autoinstall-iso/ubuntu-${{ env.UBUNTU_CODENAME }}-autoinstall.iso
+          files: ./${{ env.UBUNTU_CODENAME }}-autoinstall-iso/ubuntu-${{ env.UBUNTU_CODENAME }}-autoinstall_$(date +"%Y.%m.%d").iso
