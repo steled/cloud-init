@@ -43,6 +43,7 @@ jobs:
       - name: edit grub.cfg
         shell: bash
         run: |
+          cd u22.04-autoinstall-iso
           cat << EOF > grub_add.txt
 
           menuentry "Autoinstall Ubuntu Server" {
@@ -56,7 +57,7 @@ jobs:
       - name: generate new ISO file
         shell: bash
         run: |
-          cd source-files
+          cd u22.04-autoinstall-iso/source-files
           xorriso -as mkisofs -r \
           -V 'Ubuntu-Server 22.04.3 LTS amd64' \
           -o ../ubuntu-22.04-autoinstall.iso \
