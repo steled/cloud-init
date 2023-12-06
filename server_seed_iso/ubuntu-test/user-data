@@ -2,23 +2,21 @@
 
 autoinstall:
   version: 1
+
   network:
     version: 2
     ethernets:
       eth0:
-        dhcp4: false
+        dhcp4: true
         dhcp6: false
-        addresses:
-          - 172.16.4.26/24
-        gateway4: 172.16.4.1
-        nameservers:
-          addresses: [172.16.4.1]
+
   user-data:
     hostname: ubuntu-test
     # update /etc/hosts according to hostname (otherwise sudo will complain)
     manage_etc_hosts: true
     locale: en_US.UTF-8
     timezone: Europe/Berlin
+
     # Update apt database on first boot (run 'apt-get update')
     package_update: true
     # Upgrade the instance on first boot
