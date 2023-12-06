@@ -2,6 +2,17 @@
 
 autoinstall:
   version: 1
+  network:
+    version: 2
+    ethernets:
+      eth0:
+        dhcp4: false
+        dhcp6: false
+        addresses:
+          - 172.16.4.26/24
+        gateway4: 172.16.4.1
+        nameservers:
+          addresses: [172.16.4.1]
   user-data:
     hostname: ubuntu-test
     # update /etc/hosts according to hostname (otherwise sudo will complain)
@@ -41,18 +52,6 @@ autoinstall:
       users:
         - name: root
           password: $6$rounds=4096$T2s9mnfFMrI0aSKE$caHGrj1Xm/AWJ1isV2VkGCpLg5k2ZAgC1NbPTf.EiF7Jf8uKfPe8ICuvqtMIgm3XFJMjbSPHefRa25myca8Xc0
-
-    network:
-      version: 2
-      ethernets:
-        eth0:
-          dhcp4: false
-          dhcp6: false
-          addresses:
-          - 172.16.4.26/24
-          gateway4: 172.16.4.1
-          nameservers:
-            addresses: [172.16.4.1]
 
     bootcmd:
     # disable ipv6 on all interfaces
