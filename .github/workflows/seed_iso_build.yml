@@ -28,7 +28,7 @@ jobs:
         run: sudo apt install -y cloud-image-utils
 
       - name: build ISO files
-        run: for server in *; do if [ -d "$server" ]; then echo $server && cloud-localds $server-seed.iso $server/user-data $server/meta-data; fi; done
+        run: for server in server_seed_iso/*; do if [ -d "$server" ]; then echo $server && cloud-localds $server-seed.iso $server/user-data $server/meta-data; fi; done
 
       - name: generate release tag
         id: tag
