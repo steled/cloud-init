@@ -48,7 +48,7 @@ jobs:
 
           menuentry "Autoinstall Ubuntu Server" {
               set gfxpayload=keep
-              linux   /casper/vmlinuz quiet autoinstall ds=nocloud\;s=/cdrom/server/  ---
+              linux   /casper/vmlinuz quiet autoinstall ---
               initrd  /casper/initrd
           }
           EOF
