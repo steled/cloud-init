@@ -53,6 +53,7 @@ jobs:
           }
           EOF
           sed -i '/menu_color_highlight/r grub_add.txt' source-files/boot/grub/grub.cfg
+          sed -i 's/timeout=30/timeout=1/g' source-files/boot/grub/grub.cfg
 
       - name: generate new ISO file
         shell: bash
