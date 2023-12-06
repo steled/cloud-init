@@ -1,4 +1,4 @@
-name: Build Ubuntu autoinstall ISO files
+name: build Ubuntu autoinstall iso files
 
 # Controls when the workflow will run
 on:
