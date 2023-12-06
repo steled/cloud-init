@@ -49,7 +49,6 @@ jobs:
           menuentry "Autoinstall Ubuntu Server" {
               set gfxpayload=keep
               linux   /casper/vmlinuz quiet autoinstall ---
-              initrd  /casper/initrd
           }
           EOF
           sed -i '/menu_color_highlight/r grub_add.txt' source-files/boot/grub/grub.cfg
