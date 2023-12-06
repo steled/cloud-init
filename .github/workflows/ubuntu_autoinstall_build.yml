@@ -1,4 +1,4 @@
-name: Build Ubuntu autoinstall ISO files
+name: build Ubuntu autoinstall iso files
 
 # Controls when the workflow will run
 on:
@@ -20,46 +20,47 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: checkout repository
+      - name: 🔃 checkout repository
         uses: actions/checkout@v4
 
-      - name: install build dependencies
+      - name: ⚙️ install build dependencies
         shell: bash
         run: sudo apt install -y p7zip-full wget xorriso
 
-      - name: read ubuntu codename
+      - name: 🛠️ read ubuntu codename
         shell: bash
         run: echo "UBUNTU_CODENAME=$(cat ubuntu_autoinstall_iso/ubuntu_codename)" >> $GITHUB_ENV
 
-      - name: build prerequsites
+      - name: 🛠️ build prerequsites
         shell: bash
         run: |
-          mkdir u22.04-autoinstall-iso
-          cd u22.04-autoinstall-iso
+          mkdir ${{ env.UBUNTU_CODENAME }}-autoinstall-iso
+          cd ${{ env.UBUNTU_CODENAME }}-autoinstall-iso
           wget https://cdimage.ubuntu.com/ubuntu-server/${{ env.UBUNTU_CODENAME }}/daily-live/current/${{ env.UBUNTU_CODENAME }}-live-server-amd64.iso
           7z -y x jammy-live-server-amd64.iso -osource-files
           mv source-files/\[BOOT\]/ ./BOOT
 
-      - name: edit grub.cfg
+      - name: 🛠️ edit grub.cfg
         shell: bash
         run: |
+          cd ${{ env.UBUNTU_CODENAME }}-autoinstall-iso
           cat << EOF > grub_add.txt
 
           menuentry "Autoinstall Ubuntu Server" {
               set gfxpayload=keep
-              linux   /casper/vmlinuz quiet autoinstall ds=nocloud\;s=/cdrom/server/  ---
-              initrd  /casper/initrd
+              linux   /casper/vmlinuz quiet autoinstall ---
           }
           EOF
           sed -i '/menu_color_highlight/r grub_add.txt' source-files/boot/grub/grub.cfg
+          sed -i 's/timeout=30/timeout=1/g' source-files/boot/grub/grub.cfg
 
-      - name: generate new ISO file
+      - name: 🛠️ generate new ISO file
         shell: bash
         run: |
-          cd source-files
+          cd ${{ env.UBUNTU_CODENAME }}-autoinstall-iso/source-files
           xorriso -as mkisofs -r \
           -V 'Ubuntu-Server 22.04.3 LTS amd64' \
-          -o ../ubuntu-22.04-autoinstall.iso \
+          -o ../ubuntu-${{ env.UBUNTU_CODENAME }}-autoinstall_$(date +"%Y.%m.%d").iso \
           --modification-date='2023112609223200' \
           --grub2-mbr '../BOOT/1-Boot-NoEmul.img' \
           --protective-msdos-label \
@@ -81,26 +82,26 @@ jobs:
           -boot-load-size 10068 \
           .
 
-      - name: generate release tag
+      - name: 🛠️ generate release tag
         id: tag
         shell: bash
         run: |
-          echo "release_tag=UbuntuAutoinstallIsoBuild_$(date +"%Y.%m.%d_%H-%M")" >> $GITHUB_OUTPUT
+          echo "release_tag=Ubuntu-${{ env.UBUNTU_CODENAME }}-AutoinstallIsoBuild_$(date +"%Y.%m.%d_%H-%M")" >> $GITHUB_OUTPUT
 
-      - name: git config
+      - name: ⚙️ git config
         shell: bash
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
 
-      - name: tag the commit
+      - name: 🔖 tag the commit
         shell: bash
         run: |
           git tag -a "${{ steps.tag.outputs.release_tag }}" -m "Version ${{ steps.tag.outputs.release_tag }}"
           git push --follow-tags
 
-      - name: Release
+      - name: 📢 release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ steps.tag.outputs.release_tag }}
-          files: ./*.iso
+          files: ./${{ env.UBUNTU_CODENAME }}-autoinstall-iso/ubuntu-${{ env.UBUNTU_CODENAME }}-autoinstall_*.iso

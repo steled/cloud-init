@@ -1,0 +1,67 @@
+#cloud-config
+
+autoinstall:
+  version: 1
+
+  network:
+    version: 2
+    ethernets:
+      eth0:
+        dhcp4: true
+        dhcp6: false
+
+  user-data:
+    hostname: ubuntu-test
+    # update /etc/hosts according to hostname (otherwise sudo will complain)
+    manage_etc_hosts: true
+    locale: en_US.UTF-8
+    timezone: Europe/Berlin
+
+    # Update apt database on first boot (run 'apt-get update')
+    package_update: true
+    # Upgrade the instance on first boot
+    package_upgrade: true
+
+    # Install additional packages on first boot
+    packages:
+      - git
+      - curl
+      - apt-transport-https
+      - gnupg
+      - software-properties-common
+
+    users:
+    # - default # pi user
+    - name: steled
+      groups: sudo
+      sudo: "ALL=(ALL) NOPASSWD:ALL"
+      # set to false to allow password login for this user
+      lock_passwd: false
+      passwd: $6$rounds=4096$5wYv56JFqRevdLQY$S/a7a6ZrtA6HHz5kncGDlA3ZxYVr0otHL8zLiwyKLY1qFiFuCNLmwpYjlovvcYdn0b84YISo2gtdJNzP5t10n.
+      shell: /bin/bash
+      ssh_authorized_keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC3MlX8PC45lojTGQibGHZ0F26FZOhhGwcE3ROlg+LtQ5iPNMh8cjZlQ2BaW0P7D/3YfbiyN6t4odV+bC9Hx/7oXAa3TGvR4rALC7LEw37Fw78sfDqTqRWt3tNSk5BWgKNRpNMLFUwRSUQ0XAVMRQbqzusG4KwL0GgwiSgx5lVMXlt+PRmYhR7zsg0BqxC7WT9hMDVov1UT+xGWKDoWN4WULXYZ1wow2SJfZjw0JYcgb9c2zL2RhGahdF3VO+O/EuYbzvyFithpqYJEcmQAXLyrwyLO3X+Z7uZ7GccTeOrsyX8WGIrfz4wURv5Lqqpmy0VXW19MRrF87HJ5pcig2dOYAS4WkORAsR6f7IaDXEXoDmXlnMIrCCyEpXwZTAdW97QsQbA8t/fqejgG+U0o4PTltkwKywTGksENuzB0EwCrh5wESiX116REwWq+b4P089Pau3NHHe1rZOSJInNjzLvg0ac6kRjzxLAsjG1jupONXbgiPAvmASE6N2X33svskDgeeBmbbFbKG5S4jwXL1fgVwYDtyLehptl1p/mr9bVr/eq4iZjuScnpKpdWtrK756FAbfghbtkulJs0VLsrGenrNS754oIbNzEzELwzDb45TOO0JuhGeywdIm8qluGjuHOgc6BPbv6exZfaC+42z0SWiajJqv6uhrKaGEs553rWSw== steled
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGyuD7T6qU6jE9V/fiVIyaLYZnP9PVA6JQc0u/tXJN/9 steled
+
+    # Disable ssh password authentication
+    ssh_pwauth: false
+    chpasswd:
+      expire: false
+      users:
+        - name: root
+          password: $6$rounds=4096$T2s9mnfFMrI0aSKE$caHGrj1Xm/AWJ1isV2VkGCpLg5k2ZAgC1NbPTf.EiF7Jf8uKfPe8ICuvqtMIgm3XFJMjbSPHefRa25myca8Xc0
+
+    bootcmd:
+    # disable ipv6 on all interfaces
+    - sysctl net.ipv6.conf.all.disable_ipv6=1
+    - swapoff -a
+    - sudo sed -i -r 's/(console.*)/\1 cgroup_enable=cpuset cgroup_enable=memory cgroup_memory=1 swapaccount=1/' /boot/cmdline.txt
+
+    runcmd:
+      - sed -i 's/^#AuthorizedKeysFile/AuthorizedKeysFile/' /etc/ssh/sshd_config
+      - sed -i 's/^#PubkeyAuthentication/PubkeyAuthentication/' /etc/ssh/sshd_config
+      - sed -i 's/^#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
+      - sed -i 's/^#PermitEmptyPasswords/PermitEmptyPasswords/' /etc/ssh/sshd_config
+      - sed -i 's/^UsePAM yes/UsePAM no/' /etc/ssh/sshd_config
+      - sed -i '/#PermitRootLogin prohibit-password/aPermitRootLogin yes' /etc/ssh/sshd_config
+      - echo -e "Match User root\n\tPasswordAuthentication yes" | sudo tee -a /etc/ssh/sshd_config
