@@ -187,7 +187,7 @@ autoinstall:
         type: lvm_partition
         name: rancher
         size: 12GB
-        volgroup: vg-system
+        volgroup: vg-rancher
       - id: format-rancher
         type: format
         fstype: xfs
@@ -202,7 +202,7 @@ autoinstall:
         type: lvm_partition
         name: kubelet
         size: 12GB
-        volgroup: vg-system
+        volgroup: vg-rancher
       - id: format-kubelet
         type: format
         fstype: xfs
@@ -217,7 +217,7 @@ autoinstall:
         type: lvm_partition
         name: k3s
         size: 2GB
-        volgroup: vg-system
+        volgroup: vg-rancher
       - id: format-k3s
         type: format
         fstype: xfs
