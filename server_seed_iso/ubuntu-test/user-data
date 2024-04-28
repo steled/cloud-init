@@ -213,15 +213,15 @@ autoinstall:
         device: format-kubelet
 
       # LV k3s
-      # - id: lv-k3s
-      #   type: lvm_partition
-      #   name: k3s
-      #   size: 2GB
-      #   volgroup: vg-rancher
-      # - id: format-k3s
-      #   type: format
-      #   fstype: xfs
-      #   volume: lv-k3s
+      - id: lv-k3s
+        type: lvm_partition
+        name: k3s
+        size: 2GB
+        volgroup: vg-rancher
+      - id: format-k3s
+        type: format
+        fstype: xfs
+        volume: lv-k3s
       # - id: mount-k3s
       #   type: mount
       #   path: /run/k3s
