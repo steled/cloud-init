@@ -268,19 +268,25 @@ autoinstall:
         - name: root
           password: $6$rounds=4096$5j6pXRAJPqTqvf64$WNIsTZhFCUsM83DJi41Dh01.5KYCunfsaiS08jhwuP3qoUxKrdnLXPsOxGIUOquOCEq6.JeHY7X5PjJMKUUkm.
 
-    bootcmd:
+    # bootcmd:
     # disable ipv6 on all interfaces
-    - sysctl net.ipv6.conf.all.disable_ipv6=1
-    - swapoff -a
+    # - sysctl net.ipv6.conf.all.disable_ipv6=1
+    # - swapoff -a
 
     runcmd:
+      # disable ipv6 on all interfaces
+      - sysctl net.ipv6.conf.all.disable_ipv6=1
+      - swapoff -a
       - sed -i 's/^#AuthorizedKeysFile/AuthorizedKeysFile/' /etc/ssh/sshd_config
       - sed -i 's/^#PubkeyAuthentication/PubkeyAuthentication/' /etc/ssh/sshd_config
       - sed -i 's/^#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
       - sed -i 's/^#PermitEmptyPasswords/PermitEmptyPasswords/' /etc/ssh/sshd_config
       - sed -i 's/^UsePAM yes/UsePAM no/' /etc/ssh/sshd_config
       - sed -i '/#PermitRootLogin prohibit-password/aPermitRootLogin yes' /etc/ssh/sshd_config
-      - echo -e 'Match User root\n\tPasswordAuthentication yes' | sudo tee -a /etc/ssh/sshd_config # needs to be fixed
+      # - echo -e 'Match User root\n\tPasswordAuthentication yes' | sudo tee -a /etc/ssh/sshd_config # needs to be fixed
+      - echo 'Match User root' | sudo tee -a /etc/ssh/sshd_config
+      - echo 'PasswordAuthentication yes' | sudo tee -a /etc/ssh/sshd_config
+      - mkdir --mode 0711 /run/k3s
 
     power_state:
       delay: now
