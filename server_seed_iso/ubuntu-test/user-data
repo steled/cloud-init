@@ -62,7 +62,7 @@ autoinstall:
       - id: lv-root
         type: lvm_partition
         name: root
-        size: 4GB
+        size: 50GB
         volgroup: vg-system
       - id: format-root
         type: format
@@ -73,159 +73,159 @@ autoinstall:
         path: /
         device: format-root
 
-      # LV system/var
-      # CIS 1.1.6 
-      - id: lv-var
-        type: lvm_partition
-        volgroup: vg-system
-        name: var
-        size: 2GB
-      - id: format-var
-        type: format
-        fstype: xfs
-        volume: lv-var
-      - id: mount-var
-        type: mount
-        path: /var
-        device: format-var
-
-      # LV system/var-tmp
-      # CIS 1.1.7, 1.1.8, 1.1.9, 1.1.10 
-      - id: lv-var-tmp
-        type: lvm_partition
-        volgroup: vg-system
-        name: var_tmp
-        size: 1GB
-      - id: format-var-tmp
-        type: format
-        fstype: xfs
-        volume: lv-var-tmp
-      - id: mount-var-tmp
-        type: mount
-        path: /var/tmp
-        device: format-var-tmp
-        options: 'noexec,nosuid,nodev'
-
-      # LV system/var-log
-      # CIS 1.1.11
-      - id: lv-var-log
-        type: lvm_partition
-        volgroup: vg-system
-        name: var_log
-        size: 2GB
-      - id: format-var-log
-        type: format
-        fstype: xfs
-        volume: lv-var-log
-      - id: mount-var-log
-        type: mount
-        path: /var/log
-        device: format-var-log
-
-      # LV system/var-log-audit
-      # CIS 1.1.12
-      - id: lv-var-log-audit
-        type: lvm_partition
-        volgroup: vg-system
-        name: var_log_audit
-        size: 2GB
-      - id: format-var-log-audit
-        type: format
-        fstype: xfs
-        volume: lv-var-log-audit
-      - id: mount-var-log-audit
-        type: mount
-        path: /var/log/audit
-        device: format-var-log-audit
-
-      # LV system/home
-      # CIS 1.1.13, 1.1.14
-      - id: lv-home
-        type: lvm_partition
-        volgroup: vg-system
-        name: home
-        size: 1GB
-      - id: format-home
-        type: format
-        fstype: xfs
-        volume: lv-home
-      - id: mount-home
-        type: mount
-        path: /home
-        device: format-home
-        options: 'nodev'
-
-      # swap
-      - id: lv-swap
-        type: lvm_partition
-        volgroup: vg-system
-        name: swap
-        size: 4GB
-      - id: format-swap
-        type: format
-        fstype: swap
-        volume: lv-swap
-
-      # 2nd partition for lvm
-      - id: sda3
-        device: sda
-        type: partition
-        size: 30GB
-        flag: linux
-        preserve: false
-
-      # rancher volume group
-      - id: vg-rancher
-        type: lvm_volgroup
-        name: rancher
-        devices:
-          - sda3
-        preserve: false
-
-      # LV rancher
-      - id: lv-rancher
-        type: lvm_partition
-        name: rancher
-        size: 12GB
-        volgroup: vg-rancher
-      - id: format-rancher
-        type: format
-        fstype: xfs
-        volume: lv-rancher
-      - id: mount-rancher
-        type: mount
-        path: /var/lib/rancher
-        device: format-rancher
-
-      # LV kubelet
-      - id: lv-kubelet
-        type: lvm_partition
-        name: kubelet
-        size: 12GB
-        volgroup: vg-rancher
-      - id: format-kubelet
-        type: format
-        fstype: xfs
-        volume: lv-kubelet
-      - id: mount-kubelet
-        type: mount
-        path: /var/lib/kubelet
-        device: format-kubelet
-
-      # LV k3s
-      - id: lv-k3s
-        type: lvm_partition
-        name: k3s
-        size: 2GB
-        volgroup: vg-rancher
-      - id: format-k3s
-        type: format
-        fstype: xfs
-        volume: lv-k3s
-      # - id: mount-k3s
+      # # LV system/var
+      # # CIS 1.1.6 
+      # - id: lv-var
+      #   type: lvm_partition
+      #   volgroup: vg-system
+      #   name: var
+      #   size: 2GB
+      # - id: format-var
+      #   type: format
+      #   fstype: xfs
+      #   volume: lv-var
+      # - id: mount-var
       #   type: mount
-      #   path: /run/k3s
-      #   device: format-k3s
+      #   path: /var
+      #   device: format-var
+
+      # # LV system/var-tmp
+      # # CIS 1.1.7, 1.1.8, 1.1.9, 1.1.10 
+      # - id: lv-var-tmp
+      #   type: lvm_partition
+      #   volgroup: vg-system
+      #   name: var_tmp
+      #   size: 1GB
+      # - id: format-var-tmp
+      #   type: format
+      #   fstype: xfs
+      #   volume: lv-var-tmp
+      # - id: mount-var-tmp
+      #   type: mount
+      #   path: /var/tmp
+      #   device: format-var-tmp
+      #   options: 'noexec,nosuid,nodev'
+
+      # # LV system/var-log
+      # # CIS 1.1.11
+      # - id: lv-var-log
+      #   type: lvm_partition
+      #   volgroup: vg-system
+      #   name: var_log
+      #   size: 2GB
+      # - id: format-var-log
+      #   type: format
+      #   fstype: xfs
+      #   volume: lv-var-log
+      # - id: mount-var-log
+      #   type: mount
+      #   path: /var/log
+      #   device: format-var-log
+
+      # # LV system/var-log-audit
+      # # CIS 1.1.12
+      # - id: lv-var-log-audit
+      #   type: lvm_partition
+      #   volgroup: vg-system
+      #   name: var_log_audit
+      #   size: 2GB
+      # - id: format-var-log-audit
+      #   type: format
+      #   fstype: xfs
+      #   volume: lv-var-log-audit
+      # - id: mount-var-log-audit
+      #   type: mount
+      #   path: /var/log/audit
+      #   device: format-var-log-audit
+
+      # # LV system/home
+      # # CIS 1.1.13, 1.1.14
+      # - id: lv-home
+      #   type: lvm_partition
+      #   volgroup: vg-system
+      #   name: home
+      #   size: 1GB
+      # - id: format-home
+      #   type: format
+      #   fstype: xfs
+      #   volume: lv-home
+      # - id: mount-home
+      #   type: mount
+      #   path: /home
+      #   device: format-home
+      #   options: 'nodev'
+
+      # # swap
+      # - id: lv-swap
+      #   type: lvm_partition
+      #   volgroup: vg-system
+      #   name: swap
+      #   size: 4GB
+      # - id: format-swap
+      #   type: format
+      #   fstype: swap
+      #   volume: lv-swap
+
+      # # 2nd partition for lvm
+      # - id: sda3
+      #   device: sda
+      #   type: partition
+      #   size: 30GB
+      #   flag: linux
+      #   preserve: false
+
+      # # rancher volume group
+      # - id: vg-rancher
+      #   type: lvm_volgroup
+      #   name: rancher
+      #   devices:
+      #     - sda3
+      #   preserve: false
+
+      # # LV rancher
+      # - id: lv-rancher
+      #   type: lvm_partition
+      #   name: rancher
+      #   size: 12GB
+      #   volgroup: vg-rancher
+      # - id: format-rancher
+      #   type: format
+      #   fstype: xfs
+      #   volume: lv-rancher
+      # - id: mount-rancher
+      #   type: mount
+      #   path: /var/lib/rancher
+      #   device: format-rancher
+
+      # # LV kubelet
+      # - id: lv-kubelet
+      #   type: lvm_partition
+      #   name: kubelet
+      #   size: 12GB
+      #   volgroup: vg-rancher
+      # - id: format-kubelet
+      #   type: format
+      #   fstype: xfs
+      #   volume: lv-kubelet
+      # - id: mount-kubelet
+      #   type: mount
+      #   path: /var/lib/kubelet
+      #   device: format-kubelet
+
+      # # LV k3s
+      # - id: lv-k3s
+      #   type: lvm_partition
+      #   name: k3s
+      #   size: 2GB
+      #   volgroup: vg-rancher
+      # - id: format-k3s
+      #   type: format
+      #   fstype: xfs
+      #   volume: lv-k3s
+      # # - id: mount-k3s
+      # #   type: mount
+      # #   path: /run/k3s
+      # #   device: format-k3s
 
   user-data:
     hostname: ubuntu-test
@@ -268,15 +268,12 @@ autoinstall:
         - name: root
           password: $6$rounds=4096$5j6pXRAJPqTqvf64$WNIsTZhFCUsM83DJi41Dh01.5KYCunfsaiS08jhwuP3qoUxKrdnLXPsOxGIUOquOCEq6.JeHY7X5PjJMKUUkm.
 
-    # bootcmd:
+    bootcmd:
     # disable ipv6 on all interfaces
-    # - sysctl net.ipv6.conf.all.disable_ipv6=1
-    # - swapoff -a
+    - sysctl net.ipv6.conf.all.disable_ipv6=1
+    - swapoff -a
 
     runcmd:
-      # disable ipv6 on all interfaces
-      - sysctl net.ipv6.conf.all.disable_ipv6=1
-      - swapoff -a
       - sed -i 's/^#AuthorizedKeysFile/AuthorizedKeysFile/' /etc/ssh/sshd_config
       - sed -i 's/^#PubkeyAuthentication/PubkeyAuthentication/' /etc/ssh/sshd_config
       - sed -i 's/^#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
@@ -286,7 +283,7 @@ autoinstall:
       # - echo -e 'Match User root\n\tPasswordAuthentication yes' | sudo tee -a /etc/ssh/sshd_config # needs to be fixed
       - echo 'Match User root' | sudo tee -a /etc/ssh/sshd_config
       - echo 'PasswordAuthentication yes' | sudo tee -a /etc/ssh/sshd_config
-      - mkdir --mode 0711 /run/k3s
+      # - mkdir --mode 0711 /run/k3s
 
     power_state:
       delay: now
