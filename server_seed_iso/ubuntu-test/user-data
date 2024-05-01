@@ -46,7 +46,7 @@ autoinstall:
       - id: sda2
         device: sda
         type: partition
-        size: 28GB
+        size: 55GB
         flag: linux
         preserve: false
 
