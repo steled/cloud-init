@@ -251,6 +251,7 @@ autoinstall:
     # - default # ubuntu user
     - name: steled
       groups: sudo
+      uid: 1001
       sudo: "ALL=(ALL) NOPASSWD:ALL"
       # set to false to allow password login for this user
       lock_passwd: false
@@ -282,7 +283,7 @@ autoinstall:
       - sed -i '/#PermitRootLogin prohibit-password/aPermitRootLogin yes' /etc/ssh/sshd_config
       # - echo -e 'Match User root\n\tPasswordAuthentication yes' | sudo tee -a /etc/ssh/sshd_config # needs to be fixed
       - echo 'Match User root' | sudo tee -a /etc/ssh/sshd_config
-      - echo 'PasswordAuthentication yes' | sudo tee -a /etc/ssh/sshd_config
+      - echo '       PasswordAuthentication yes' | sudo tee -a /etc/ssh/sshd_config
       # - mkdir --mode 0711 /run/k3s
 
     power_state:
