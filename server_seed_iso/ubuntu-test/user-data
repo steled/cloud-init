@@ -251,7 +251,7 @@ autoinstall:
     # - default # ubuntu user
     - name: steled
       groups: sudo
-      uid: 1001
+      uid: 500
       sudo: "ALL=(ALL) NOPASSWD:ALL"
       # set to false to allow password login for this user
       lock_passwd: false
