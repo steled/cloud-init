@@ -12,6 +12,10 @@ autoinstall:
         dhcp4: true
         dhcp6: false
 
+  packages:
+    - openssh-server
+    - ssh-import-id
+
   keyboard:
     layout: de
 
