@@ -15,6 +15,10 @@ autoinstall:
           name: eno1
         set-name: eth0
 
+  packages:
+    - openssh-server
+    - ssh-import-id
+
   keyboard:
     layout: de
 
@@ -249,8 +253,6 @@ autoinstall:
       - apt-transport-https
       - gnupg
       - software-properties-common
-      - openssh-server
-      - ssh-import-id
 
     users:
     # - default # ubuntu user
