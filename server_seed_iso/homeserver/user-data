@@ -1,0 +1,298 @@
+#cloud-config
+
+autoinstall:
+  version: 1
+  refresh-installer:
+    update: yes
+
+  network:
+    version: 2
+    ethernets:
+      eth0:
+        dhcp4: true
+        dhcp6: false
+
+  keyboard:
+    layout: de
+
+  # https://curtin.readthedocs.io/en/latest/topics/storage.html
+  # Disk layout
+  storage:
+    config:
+      # Setup the disk with GPT
+      - id: sda
+        type: disk
+        ptable: gpt
+        path: /dev/sda
+        preserve: false
+        wipe: superblock
+      # Create partition for /boot/efi
+      - id: sda1
+        device: sda
+        type: partition
+        size: 1GB
+        flag: boot
+        grub_device: true
+      - fstype: vfat
+        volume: sda1
+        type: format
+        id: format-sda1
+      - path: /boot/efi
+        device: format-sda1
+        type: mount
+        id: mount-sda1
+
+      # 1st partition for lvm
+      - id: sda2
+        device: sda
+        type: partition
+        size: 305GB
+        flag: linux
+        preserve: false
+
+      # system volume group
+      - id: vg-system
+        type: lvm_volgroup
+        name: system
+        devices:
+          - sda2
+        preserve: false
+
+      # LV system/root
+      - id: lv-root
+        type: lvm_partition
+        name: root
+        size: 300GB
+        volgroup: vg-system
+      - id: format-root
+        type: format
+        fstype: xfs
+        volume: lv-root
+      - id: mount-root
+        type: mount
+        path: /
+        device: format-root
+
+      # # LV system/var
+      # # CIS 1.1.6 
+      # - id: lv-var
+      #   type: lvm_partition
+      #   volgroup: vg-system
+      #   name: var
+      #   size: 2GB
+      # - id: format-var
+      #   type: format
+      #   fstype: xfs
+      #   volume: lv-var
+      # - id: mount-var
+      #   type: mount
+      #   path: /var
+      #   device: format-var
+
+      # # LV system/var-tmp
+      # # CIS 1.1.7, 1.1.8, 1.1.9, 1.1.10 
+      # - id: lv-var-tmp
+      #   type: lvm_partition
+      #   volgroup: vg-system
+      #   name: var_tmp
+      #   size: 1GB
+      # - id: format-var-tmp
+      #   type: format
+      #   fstype: xfs
+      #   volume: lv-var-tmp
+      # - id: mount-var-tmp
+      #   type: mount
+      #   path: /var/tmp
+      #   device: format-var-tmp
+      #   options: 'noexec,nosuid,nodev'
+
+      # # LV system/var-log
+      # # CIS 1.1.11
+      # - id: lv-var-log
+      #   type: lvm_partition
+      #   volgroup: vg-system
+      #   name: var_log
+      #   size: 2GB
+      # - id: format-var-log
+      #   type: format
+      #   fstype: xfs
+      #   volume: lv-var-log
+      # - id: mount-var-log
+      #   type: mount
+      #   path: /var/log
+      #   device: format-var-log
+
+      # # LV system/var-log-audit
+      # # CIS 1.1.12
+      # - id: lv-var-log-audit
+      #   type: lvm_partition
+      #   volgroup: vg-system
+      #   name: var_log_audit
+      #   size: 2GB
+      # - id: format-var-log-audit
+      #   type: format
+      #   fstype: xfs
+      #   volume: lv-var-log-audit
+      # - id: mount-var-log-audit
+      #   type: mount
+      #   path: /var/log/audit
+      #   device: format-var-log-audit
+
+      # # LV system/home
+      # # CIS 1.1.13, 1.1.14
+      # - id: lv-home
+      #   type: lvm_partition
+      #   volgroup: vg-system
+      #   name: home
+      #   size: 1GB
+      # - id: format-home
+      #   type: format
+      #   fstype: xfs
+      #   volume: lv-home
+      # - id: mount-home
+      #   type: mount
+      #   path: /home
+      #   device: format-home
+      #   options: 'nodev'
+
+      # # swap
+      # - id: lv-swap
+      #   type: lvm_partition
+      #   volgroup: vg-system
+      #   name: swap
+      #   size: 4GB
+      # - id: format-swap
+      #   type: format
+      #   fstype: swap
+      #   volume: lv-swap
+
+      # # 2nd partition for lvm
+      # - id: sda3
+      #   device: sda
+      #   type: partition
+      #   size: 30GB
+      #   flag: linux
+      #   preserve: false
+
+      # # rancher volume group
+      # - id: vg-rancher
+      #   type: lvm_volgroup
+      #   name: rancher
+      #   devices:
+      #     - sda3
+      #   preserve: false
+
+      # # LV rancher
+      # - id: lv-rancher
+      #   type: lvm_partition
+      #   name: rancher
+      #   size: 12GB
+      #   volgroup: vg-rancher
+      # - id: format-rancher
+      #   type: format
+      #   fstype: xfs
+      #   volume: lv-rancher
+      # - id: mount-rancher
+      #   type: mount
+      #   path: /var/lib/rancher
+      #   device: format-rancher
+
+      # # LV kubelet
+      # - id: lv-kubelet
+      #   type: lvm_partition
+      #   name: kubelet
+      #   size: 12GB
+      #   volgroup: vg-rancher
+      # - id: format-kubelet
+      #   type: format
+      #   fstype: xfs
+      #   volume: lv-kubelet
+      # - id: mount-kubelet
+      #   type: mount
+      #   path: /var/lib/kubelet
+      #   device: format-kubelet
+
+      # # LV k3s
+      # - id: lv-k3s
+      #   type: lvm_partition
+      #   name: k3s
+      #   size: 2GB
+      #   volgroup: vg-rancher
+      # - id: format-k3s
+      #   type: format
+      #   fstype: xfs
+      #   volume: lv-k3s
+      # # - id: mount-k3s
+      # #   type: mount
+      # #   path: /run/k3s
+      # #   device: format-k3s
+
+  user-data:
+    hostname: homeserver
+    # update /etc/hosts according to hostname (otherwise sudo will complain)
+    manage_etc_hosts: true
+    locale: en_US.UTF-8
+    timezone: Europe/Berlin
+
+    # Update apt database on first boot (run 'apt-get update')
+    package_update: true
+    # Upgrade the instance on first boot
+    package_upgrade: true
+
+    # Install additional packages on first boot
+    packages:
+      - git
+      - curl
+      - apt-transport-https
+      - gnupg
+      - software-properties-common
+
+    users:
+    # - default # ubuntu user
+    - name: steled
+      groups: sudo
+      uid: 500
+      sudo: "ALL=(ALL) NOPASSWD:ALL"
+      # set to false to allow password login for this user
+      lock_passwd: false
+      passwd: $6$rounds=4096$56grnN3jEAHPnT3o$ahwruqGooLnbUpOO4mA3CvBcXieRC.foUS6AAXQ4PIU.6hlP0aTkzXF1xmnguyey0f0ujp0dgO6hNTjrT44Uk.
+      shell: /bin/bash
+      ssh_authorized_keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC3MlX8PC45lojTGQibGHZ0F26FZOhhGwcE3ROlg+LtQ5iPNMh8cjZlQ2BaW0P7D/3YfbiyN6t4odV+bC9Hx/7oXAa3TGvR4rALC7LEw37Fw78sfDqTqRWt3tNSk5BWgKNRpNMLFUwRSUQ0XAVMRQbqzusG4KwL0GgwiSgx5lVMXlt+PRmYhR7zsg0BqxC7WT9hMDVov1UT+xGWKDoWN4WULXYZ1wow2SJfZjw0JYcgb9c2zL2RhGahdF3VO+O/EuYbzvyFithpqYJEcmQAXLyrwyLO3X+Z7uZ7GccTeOrsyX8WGIrfz4wURv5Lqqpmy0VXW19MRrF87HJ5pcig2dOYAS4WkORAsR6f7IaDXEXoDmXlnMIrCCyEpXwZTAdW97QsQbA8t/fqejgG+U0o4PTltkwKywTGksENuzB0EwCrh5wESiX116REwWq+b4P089Pau3NHHe1rZOSJInNjzLvg0ac6kRjzxLAsjG1jupONXbgiPAvmASE6N2X33svskDgeeBmbbFbKG5S4jwXL1fgVwYDtyLehptl1p/mr9bVr/eq4iZjuScnpKpdWtrK756FAbfghbtkulJs0VLsrGenrNS754oIbNzEzELwzDb45TOO0JuhGeywdIm8qluGjuHOgc6BPbv6exZfaC+42z0SWiajJqv6uhrKaGEs553rWSw== steled
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGyuD7T6qU6jE9V/fiVIyaLYZnP9PVA6JQc0u/tXJN/9 steled
+
+    # Disable ssh password authentication
+    ssh_pwauth: false
+    chpasswd:
+      expire: false
+      users:
+        - name: root
+          password: $6$rounds=4096$5j6pXRAJPqTqvf64$WNIsTZhFCUsM83DJi41Dh01.5KYCunfsaiS08jhwuP3qoUxKrdnLXPsOxGIUOquOCEq6.JeHY7X5PjJMKUUkm.
+
+    bootcmd:
+    # disable ipv6 on all interfaces
+    - sysctl net.ipv6.conf.all.disable_ipv6=1
+    - swapoff -a
+
+    runcmd:
+      - sed -i 's/^#AuthorizedKeysFile/AuthorizedKeysFile/' /etc/ssh/sshd_config
+      - sed -i 's/^#PubkeyAuthentication/PubkeyAuthentication/' /etc/ssh/sshd_config
+      - sed -i 's/^#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
+      - sed -i 's/^#PermitEmptyPasswords/PermitEmptyPasswords/' /etc/ssh/sshd_config
+      - sed -i 's/^UsePAM yes/UsePAM no/' /etc/ssh/sshd_config
+      - sed -i '/#PermitRootLogin prohibit-password/aPermitRootLogin yes' /etc/ssh/sshd_config
+      # - echo -e 'Match User root\n\tPasswordAuthentication yes' | sudo tee -a /etc/ssh/sshd_config # needs to be fixed
+      - echo 'Match User root' | sudo tee -a /etc/ssh/sshd_config
+      - echo '       PasswordAuthentication yes' | sudo tee -a /etc/ssh/sshd_config
+      # - mkdir --mode 0711 /run/k3s
+
+    power_state:
+      delay: now
+      mode: reboot
+      message: Reboot after cloud-init
+      condition: true
+
+  late-commands:
+    - curtin in-target --target=/target -- sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT=""/GRUB_CMDLINE_LINUX_DEFAULT="cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory systemd.unified_cgroup_hierarchy=0"/' /etc/default/grub
+    - curtin in-target --target=/target -- sed -i '/GRUB_TIMEOUT=/a GRUB_RECORDFAIL_TIMEOUT=5' /etc/default/grub
+    - curtin in-target --target=/target -- update-grub
