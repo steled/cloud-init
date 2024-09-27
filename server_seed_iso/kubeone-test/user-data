@@ -279,16 +279,14 @@ autoinstall:
     - swapoff -a
 
     runcmd:
-      - sed -i 's/^#AuthorizedKeysFile/AuthorizedKeysFile/' /etc/ssh/sshd_config
-      - sed -i 's/^#PubkeyAuthentication/PubkeyAuthentication/' /etc/ssh/sshd_config
-      - sed -i 's/^#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
-      - sed -i 's/^#PermitEmptyPasswords/PermitEmptyPasswords/' /etc/ssh/sshd_config
-      - sed -i 's/^UsePAM yes/UsePAM no/' /etc/ssh/sshd_config
-      - sed -i '/#PermitRootLogin prohibit-password/aPermitRootLogin yes' /etc/ssh/sshd_config
-      # - echo -e 'Match User root\n\tPasswordAuthentication yes' | sudo tee -a /etc/ssh/sshd_config # needs to be fixed
-      - echo 'Match User root' | sudo tee -a /etc/ssh/sshd_config
-      - echo '       PasswordAuthentication yes' | sudo tee -a /etc/ssh/sshd_config
-      # - mkdir --mode 0711 /run/k3s
+      - echo "AuthorizedKeysFile      .ssh/authorized_keys .ssh/authorized_keys2" | sudo tee -a /etc/ssh/sshd_config.d/custom_sshd.conf
+      - echo "PubkeyAuthentication yes" | sudo tee -a tee -a /etc/ssh/sshd_config.d/custom_sshd.conf
+      - echo "PasswordAuthentication no" | sudo tee -a tee -a /etc/ssh/sshd_config.d/custom_sshd.conf
+      - echo "PermitEmptyPasswords no" | sudo tee -a tee -a /etc/ssh/sshd_config.d/custom_sshd.conf
+      - echo "UsePAM no" | sudo tee -a tee -a /etc/ssh/sshd_config.d/custom_sshd.conf
+      - echo "PermitRootLogin yes" | sudo tee -a tee -a /etc/ssh/sshd_config.d/custom_sshd.conf
+      - echo 'Match User root' | sudo tee -a /etc/ssh/sshd_config.d/custom_sshd.conf
+      - echo '       PasswordAuthentication yes' | sudo tee -a /etc/ssh/sshd_config.d/custom_sshd.conf
 
     power_state:
       delay: now
