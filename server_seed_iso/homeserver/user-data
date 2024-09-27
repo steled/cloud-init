@@ -8,9 +8,16 @@ autoinstall:
   network:
     version: 2
     ethernets:
-      eth0:
+      eno1:
         dhcp4: true
         dhcp6: false
+        match:
+          name: eno1
+        set-name: eth0
+
+  packages:
+    - openssh-server
+    - ssh-import-id
 
   keyboard:
     layout: de
