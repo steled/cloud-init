@@ -228,7 +228,7 @@ autoinstall:
       # #   device: format-k3s
 
   user-data:
-    hostname: ubuntu-test
+    hostname: kubeone-test
     # update /etc/hosts according to hostname (otherwise sudo will complain)
     manage_etc_hosts: true
     locale: en_US.UTF-8
