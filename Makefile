@@ -5,7 +5,7 @@ prep:
 	@sudo apt install -y cloud-image-utils p7zip-full wget xorriso
 
 build_seed:
-	@for server in server_seed_iso/*; do if [ -d "$$server" ]; then echo $$server && cloud-localds $$server-seed_$(date +"%Y.%m.%d").iso $$server/user-data $$server/meta-data; fi; done
+	@for server in server_seed_iso/*; do if [ -d "$$server" ]; then echo $$server && cloud-localds $$server-seed_$(shell date +"%Y%m%d").iso $$server/user-data $$server/meta-data; fi; done
 
 build_os:
 	@$(eval VERSION=$(shell curl https://cdimage.ubuntu.com/ubuntu-server/${UBUNTU_CODENAME}/daily-live/current/ | grep title | grep -o -P '(?<=Server).*(?=LTS)'))
