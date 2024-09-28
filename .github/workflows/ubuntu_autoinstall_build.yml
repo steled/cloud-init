@@ -37,7 +37,7 @@ jobs:
           mkdir ${{ env.UBUNTU_CODENAME }}-autoinstall-iso
           cd ${{ env.UBUNTU_CODENAME }}-autoinstall-iso
           wget https://cdimage.ubuntu.com/ubuntu-server/${{ env.UBUNTU_CODENAME }}/daily-live/current/${{ env.UBUNTU_CODENAME }}-live-server-amd64.iso
-          7z -y x jammy-live-server-amd64.iso -osource-files
+          7z -y x ${{ env.UBUNTU_CODENAME }}-live-server-amd64.iso -osource-files
           mv source-files/\[BOOT\]/ ./BOOT
 
       - name: 🛠️ edit grub.cfg
