@@ -1,7 +1,7 @@
 # Ubuntu cloud-init & autoinstall iso files
 
 This repository is used to create [server_seed_iso](server_seed_iso) files for Ubuntu cloud-init
-and also creates the Ubuntu autoinstall iso based on the [ubuntu_codename](ubuntu_autoinstall_iso/ubuntu_codename).
+and also creates the Ubuntu autoinstall ISO based on the `UBUNTU_CODENAME` variable in [Makefile](Makefile).
 
 ## server seed iso files
 
@@ -14,5 +14,5 @@ and also creates the Ubuntu autoinstall iso based on the [ubuntu_codename](ubunt
 
 ## autoinstall iso files
 
-- the autoinstall iso file is created based on the [ubuntu_codename](ubuntu_autoinstall_iso/ubuntu_codename)
+- the autoinstall iso file is created based on the `UBUNTU_CODENAME` variable in [Makefile](Makefile)
 - the iso is downloaded from https://cdimage.ubuntu.com/ubuntu-server/$ubuntu_codename/daily-live/current/$ubuntu_codename-live-server-amd64.iso
