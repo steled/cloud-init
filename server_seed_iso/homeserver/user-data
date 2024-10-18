@@ -290,6 +290,7 @@ autoinstall:
       - echo "PermitRootLogin yes" | sudo tee -a tee -a /etc/ssh/sshd_config.d/custom_sshd.conf
       - echo 'Match User root' | sudo tee -a /etc/ssh/sshd_config.d/custom_sshd.conf
       - echo '       PasswordAuthentication yes' | sudo tee -a /etc/ssh/sshd_config.d/custom_sshd.conf
+      - groupmod -g 500 steled
 
     power_state:
       delay: now
