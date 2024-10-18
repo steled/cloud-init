@@ -248,11 +248,12 @@ autoinstall:
 
     # Install additional packages on first boot
     packages:
-      - git
-      - curl
       - apt-transport-https
+      - curl
+      - git
       - gnupg
       - software-properties-common
+      - sshpass
 
     users:
     # - default # ubuntu user
