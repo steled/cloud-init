@@ -254,6 +254,7 @@ autoinstall:
       - gnupg
       - software-properties-common
       - sshpass
+      - dos2unix
 
     users:
     # - default # ubuntu user
@@ -292,6 +293,7 @@ autoinstall:
       - echo 'Match User root' | sudo tee -a /etc/ssh/sshd_config.d/custom_sshd.conf
       - echo '       PasswordAuthentication yes' | sudo tee -a /etc/ssh/sshd_config.d/custom_sshd.conf
       - groupmod -g 500 steled
+      - chown steled:steled -R ~/
 
     power_state:
       delay: now
