@@ -16,3 +16,12 @@ and also creates the Ubuntu autoinstall ISO based on the `UBUNTU_CODENAME` varia
 
 - the autoinstall iso file is created based on the `UBUNTU_CODENAME` variable in [Makefile](Makefile)
 - the iso is downloaded from https://cdimage.ubuntu.com/ubuntu-server/$ubuntu_codename/daily-live/current/$ubuntu_codename-live-server-amd64.iso
+
+## server installation
+
+- prepare one USB stick with `FAT32` and name the stick `cidata`
+- copy the files `meta-data` and `user-data` into the root folder of this USB stick
+
+- prepare a second USB stick with the `ubuntu-UBUNTU_CODENAME-autoinstall_DATE.iso`
+- you can use a tool like [Rufus]()
+- for a detailed How-To see Ubuntu Tutorials of [Create a bootable USB stick with Rufus on Windows](https://ubuntu.com/tutorials/create-a-usb-stick-on-windows)
