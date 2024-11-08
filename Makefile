@@ -1,4 +1,4 @@
-UBUNTU_CODENAME=jammy
+UBUNTU_CODENAME=noble
 
 # preapre environment
 prep:
