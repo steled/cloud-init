@@ -235,7 +235,7 @@ autoinstall:
       # #   device: format-k3s
 
   user-data:
-    hostname: homeserver
+    hostname: k8s-c01
     # update /etc/hosts according to hostname (otherwise sudo will complain)
     manage_etc_hosts: true
     locale: en_US.UTF-8
