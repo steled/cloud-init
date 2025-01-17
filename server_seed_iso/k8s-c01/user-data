@@ -53,7 +53,7 @@ autoinstall:
       - id: sda2
         device: sda
         type: partition
-        size: 305GB
+        size: 465GB
         flag: linux
         preserve: false
 
@@ -69,7 +69,7 @@ autoinstall:
       - id: lv-root
         type: lvm_partition
         name: root
-        size: 300GB
+        size: 460GB
         volgroup: vg-system
       - id: format-root
         type: format
