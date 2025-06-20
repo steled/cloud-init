@@ -154,9 +154,9 @@ autoinstall:
         preserve: false
 
       # rancher volume group
-      - id: vg-ext
+      - id: vg-kubernetes
         type: lvm_volgroup
-        name: ext
+        name: kubernetes
         devices:
           - sda3
         preserve: false
@@ -165,8 +165,8 @@ autoinstall:
       - id: lv-ext
         type: lvm_partition
         name: ext
-        size: 443GB
-        volgroup: vg-ext
+        size: 400GB
+        volgroup: vg-kubernetes
       - id: format-ext
         type: format
         fstype: xfs
@@ -176,20 +176,20 @@ autoinstall:
         path: /ext
         device: format-ext
 
-      # # LV kubelet
-      # - id: lv-kubelet
-      #   type: lvm_partition
-      #   name: kubelet
-      #   size: 12GB
-      #   volgroup: vg-rancher
-      # - id: format-kubelet
-      #   type: format
-      #   fstype: xfs
-      #   volume: lv-kubelet
-      # - id: mount-kubelet
-      #   type: mount
-      #   path: /var/lib/kubelet
-      #   device: format-kubelet
+      # LV containerd
+      - id: lv-containerd
+        type: lvm_partition
+        name: containerd
+        size: 43GB
+        volgroup: vg-kubernetes
+      - id: format-containerd
+        type: format
+        fstype: xfs
+        volume: lv-containerd
+      - id: mount-containerd
+        type: mount
+        path: /var/lib/containerd
+        device: format-containerd
 
       # # LV k3s
       # - id: lv-k3s
