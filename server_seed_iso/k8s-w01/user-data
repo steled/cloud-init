@@ -268,6 +268,7 @@ autoinstall:
       - echo '       PasswordAuthentication yes' | sudo tee -a /etc/ssh/sshd_config.d/custom_sshd.conf
       - groupmod -g 500 steled
       - chown steled:steled -R ~/
+      - sed -i s/5G/500M/ /etc/systemd/journald.conf.d/max_disk_use.conf
       # needed for longhorn
       - sudo systemctl stop multipathd
       - sudo systemctl stop multipathd.socket
