@@ -165,7 +165,7 @@ autoinstall:
       - id: lv-ext
         type: lvm_partition
         name: ext
-        size: 400GB
+        size: 380GB
         volgroup: vg-kubernetes
       - id: format-ext
         type: format
@@ -195,7 +195,7 @@ autoinstall:
       - id: lv-kubelet
         type: lvm_partition
         name: kubelet
-        size: 20GB
+        size: 19GB
         volgroup: vg-kubernetes
       - id: format-kubelet
         type: format
