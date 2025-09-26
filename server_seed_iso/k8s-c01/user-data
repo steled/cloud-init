@@ -153,7 +153,7 @@ autoinstall:
         flag: linux
         preserve: false
 
-      # rancher volume group
+      # kubernetes volume group
       - id: vg-kubernetes
         type: lvm_volgroup
         name: kubernetes
@@ -191,20 +191,20 @@ autoinstall:
         path: /var/lib/containerd
         device: format-containerd
 
-      # # LV k3s
-      # - id: lv-k3s
-      #   type: lvm_partition
-      #   name: k3s
-      #   size: 2GB
-      #   volgroup: vg-rancher
-      # - id: format-k3s
-      #   type: format
-      #   fstype: xfs
-      #   volume: lv-k3s
-      # # - id: mount-k3s
-      # #   type: mount
-      # #   path: /run/k3s
-      # #   device: format-k3s
+      # LV kubelet
+      - id: lv-kubelet
+        type: lvm_partition
+        name: kubelet
+        size: 20GB
+        volgroup: vg-kubernetes
+      - id: format-kubelet
+        type: format
+        fstype: xfs
+        volume: lv-kubelet
+      - id: mount-kubelet
+        type: mount
+        path: /var/lib/kubelet
+        device: format-kubelet
 
   user-data:
     hostname: k8s-c01
